@@ -1,6 +1,6 @@
 import React  from 'react'
 import {BrowserRouter, Route} from 'react-router-dom'
-import Menu from './Usuarios/menu'
+import Menu from './menu'
 import Usuarios from './Usuarios';
 
 const Tareas = ()=><div>Tareas</div>
