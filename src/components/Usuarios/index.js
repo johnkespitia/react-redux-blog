@@ -12,7 +12,9 @@ class Usuarios extends Component {
    // this.setState({
    //   usuarios: response.data
    // })
-   this.props.traerTodos();
+   if(!this.props.usuarios.length){
+    this.props.traerTodos();
+   }
   }
 
   ponerContenido = () =>{

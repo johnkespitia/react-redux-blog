@@ -2,22 +2,55 @@ import React,{ Component } from 'react';
 import {connect} from 'react-redux'
 import * as usuariosAction from  '../../actions/usuariosAction'
 import * as publicacionesAction from  '../../actions/publicacionesAction'
+import Spinner from '../General/Spiner';
+import Fatal from '../General/Fatal';
+
 
 const { traerTodos: usuariosTraerTodos } = usuariosAction;
-const { traerTodos: publicacionesTraerTodos } = publicacionesAction;
+const { traerPorUsuario: publicacionesTraerPorUsuario } = publicacionesAction;
 
 class Publicaciones extends Component {
 
-    componentDidMount(){
+    async componentDidMount(){
+        const {
+			usuariosTraerTodos,
+			match: { params: { key } },
+			publicacionesTraerPorUsuario
+		} = this.props;
         if(!this.props.usuariosReducer.usuarios.length){
-            this.props.usuariosTraerTodos();
+           await usuariosTraerTodos();
         }
+        if(this.props.usuariosReducer.error){
+            return;
+        }
+        if(!('publicaciones_key' in this.props.usuariosReducer.usuarios[key])){
+            publicacionesTraerPorUsuario(key);
+        }
+    }
+
+    ponerUsuario = () => {
+        const {
+			match: { params: { key } },
+			usuariosReducer
+        } = this.props;
+        
+        if(usuariosReducer.cargando){
+            return <Spinner/>
+        }
+        if(usuariosReducer.error){
+            return <Fatal mensaje={ usuariosReducer.error } />;
+        }
+        const nombre = usuariosReducer.usuarios[key]
+        return (
+            <h1>Publicaciones de </h1>
+            {key}
+        )
     }
 
     render(){
         return (<div>
-            <h1>Publicaciones de </h1>
-            {this.props.match.params.key}
+            
+            {this.ponerUsuario()}
         </div>)
     }
 }
@@ -27,6 +60,6 @@ const mapStateToProps = ({usuariosReducer, publicacionesReducer })=>{
 }
 const mapDispatchProps = {
     usuariosTraerTodos, 
-    publicacionesTraerTodos
+    publicacionesTraerPorUsuario
 }
 export default connect(mapStateToProps,mapDispatchProps)(Publicaciones);
